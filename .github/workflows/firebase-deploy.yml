@@ -1,0 +1,38 @@
+name: Firebase Deploy
+
+on:
+  push:
+    paths:
+      - "functions/**"
+      - "src/**"
+      - "public/**"
+      - "firebase.json"
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Build frontend (Vite)
+        run: npm run build
+
+      - name: Deploy to Firebase
+        run: firebase deploy --only hosting,functions --project gaid-agent
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
