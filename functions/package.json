@@ -25,7 +25,7 @@
     "debug": "firebase emulators:start --inspect-functions"
   },
   "engines": {
-    "node": "22"
+    "node": "20"
   },
   "main": "dist/index.js",
   "dependencies": {
