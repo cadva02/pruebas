@@ -20,7 +20,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
@@ -28,14 +28,8 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
-      - name: Crear .env global compartido
+      - name: Crear .env
         run: echo "${{ secrets.ENV_CLOUD }}" > .env
-
-      - name: Copiar .env a web
-        run: cp .env ./web/.env
-
-      - name: Copiar .env a functions
-        run: cp .env ./functions/.env
 
       - name: Build frontend (Vite)
         run: npm run build
