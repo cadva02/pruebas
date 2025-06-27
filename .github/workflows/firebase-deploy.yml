@@ -8,7 +8,7 @@ on:
       - "public/**"
       - "firebase.json"
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
