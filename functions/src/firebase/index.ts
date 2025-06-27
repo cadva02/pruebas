@@ -4,20 +4,19 @@ import { getDatabase } from 'firebase-admin/database';
 import { getStorage } from 'firebase-admin/storage';
 import { getFirestore } from 'firebase-admin/firestore';
 import dotenv from 'dotenv';
-import * as fs from 'fs';
+import * as fs from 'fs'; // <-- módulo de archivos, sin conflicto
 
 dotenv.config();
 
 let serviceAccount: any = undefined;
 
-// Solución creativa y robusta para entornos locales y CI/CD:
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
   // ✅ Modo GitHub Actions: usar JSON completo
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
   try {
     const parsed = JSON.parse(raw);
 
-    // DEBUG: Imprime project_id y claves presentes
+    // DEBUG opcional:
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_FIREBASE_CREDS) {
       console.log('==== DEBUG: Claves presentes en FIREBASE_SERVICE_ACCOUNT ====');
       console.log(Object.keys(parsed));
@@ -40,7 +39,7 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
     const fileContents = fs.readFileSync(credsPath, 'utf8');
     const parsed = JSON.parse(fileContents);
 
-    // DEBUG: Imprime project_id y claves presentes
+    // DEBUG opcional:
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_FIREBASE_CREDS) {
       console.log('==== DEBUG: Claves presentes en GOOGLE_APPLICATION_CREDENTIALS ====');
       console.log(Object.keys(parsed));
@@ -75,7 +74,6 @@ if (process.env.NODE_ENV === 'development' || process.env.DEBUG_FIREBASE_CREDS) 
   });
 }
 
-// Inicializa solo si no está inicializado (para hot reload/testing)
 const app = initializeApp(
   {
     credential: cert(serviceAccount),
@@ -87,4 +85,5 @@ const app = initializeApp(
 export const auth = getAuth(app);
 export const db = getDatabase(app);
 export const storage = getStorage(app);
-export const fs = getFirestore(app);
+// Cambia el nombre de la exportación de Firestore
+export const firestoreDB = getFirestore(app);
