@@ -8,7 +8,7 @@ on:
       - "public/**"
       - "firebase.json"
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -33,9 +33,9 @@ jobs:
         run: npm run build
 
       - name: Set up Service Account credentials
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > "${HOME}/gcloud.json"
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > "$HOME/gcloud.json"
 
       - name: Deploy to Firebase
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ HOME }}/gcloud.json
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcloud.json
         run: firebase deploy --only hosting,functions --project gaid-agent
