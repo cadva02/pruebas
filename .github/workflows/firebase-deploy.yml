@@ -52,6 +52,8 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: gaid-agent
-     
+      - name: Print secret debug (temporal)
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+
       - name: Deploy to Firebase Hosting and Functions
         run: firebase deploy --only hosting,functions --project gaid-agent
