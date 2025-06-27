@@ -18,12 +18,24 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
 
-      - name: Snyk scan
+      - name: Snyk scan (root)
         uses: snyk/actions/node@master
         with:
           command: test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_CARLOSDELGADO }}
+
+      - name: Install functions dependencies
+        run: |
+          cd functions
+          npm install
+
+      - name: Snyk scan (functions)
+        run: |
+          cd functions
+          npx snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_CARLOSDELGADO }}
