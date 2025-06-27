@@ -5,15 +5,14 @@ import { getStorage } from 'firebase-admin/storage';
 import { getFirestore } from 'firebase-admin/firestore';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ path: './functions/.env' });
 
 let serviceAccount;
 
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  // ✅ Modo GitHub Actions: usar JSON completo
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  // ✅ Modo GitHub Actions: usar JSON completo (string)
   try {
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     serviceAccount = {
       projectId: parsed.project_id,
       privateKey: parsed.private_key.replace(/\\n/g, '\n'),
