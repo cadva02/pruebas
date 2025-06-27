@@ -31,8 +31,11 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
-      - name: Crear .env
-        run: echo "${{ secrets.ENV_CLOUD }}" > .env
+      - name: Crear .env para funciones
+        run: |
+          echo "FIREBASE_SERVICE_ACCOUNT=${FIREBASE_SERVICE_ACCOUNT}" > functions/.env
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Build frontend (Vite)
         run: npm run build
