@@ -52,6 +52,14 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: gaid-agent
+      - name: Check GitHub App env vars
+        run: |
+          if [ -z "${GITHUB_APP_ID}" ]; then echo "GITHUB_APP_ID missing"; exit 1; fi
+          if [ -z "${GITHUB_PRIVATE_KEY}" ]; then echo "GITHUB_PRIVATE_KEY missing"; exit 1; fi
+          echo "✅ GITHUB App variables loaded"
+        env:
+          GITHUB_APP_ID: ${{ secrets.GITHUB_APP_ID }}
+          GITHUB_PRIVATE_KEY: ${{ secrets.GITHUB_PRIVATE_KEY }}
 
       - name: Deploy to Firebase Hosting and Functions
         run: firebase deploy --only hosting,functions --project gaid-agent
