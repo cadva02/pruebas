@@ -29,10 +29,22 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
+      - name: Crear .env global compartido
+        run: echo "${{ secrets.ENV_CLOUD }}" > .env
+
+      - name: Copiar .env a web
+        run: cp .env ./web/.env
+
+      - name: Copiar .env a functions
+        run: cp .env ./functions/.env
+
       - name: Build frontend (Vite)
         run: npm run build
 
+      - name: Set up Service Account credentials
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud.json
+
       - name: Deploy to Firebase
-        run: firebase deploy --only hosting,functions --project gaid-agent
         env:
-          FIREBASE_TOKEN: ${{ secrets.secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcloud.json
+        run: firebase deploy --only hosting,functions --project gaid-agent
