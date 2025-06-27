@@ -18,9 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set FIREBASE_SERVICE_ACCOUNT env var
-        run: echo "FIREBASE_SERVICE_ACCOUNT=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" >> $GITHUB_ENV
-        
+      - name: Crear .env para funciones
+        run: |
+          echo "FIREBASE_SERVICE_ACCOUNT='${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'" > functions/.env
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
