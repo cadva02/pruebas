@@ -22,4 +22,4 @@ function App() {
 }
 
 export default App;
-<h1>¡Hola desde Firebase Deploy!</h1>
+<h1>¡Hola desde Firebase Depoy!</h1>
