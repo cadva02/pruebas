@@ -20,8 +20,9 @@ jobs:
 
       - name: Crear .env para funciones
         run: |
-          echo "FIREBASE_SERVICE_ACCOUNT='${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'" > functions/.env
-
+          echo "FIREBASE_SERVICE_ACCOUNT=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > functions/.env
+      - name: Debug .env FIREBASE_SERVICE_ACCOUNT
+        run: cat functions/.env | grep FIREBASE_SERVICE_ACCOUNT | wc -c
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
