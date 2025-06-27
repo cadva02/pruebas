@@ -1,26 +1,30 @@
 import { initializeApp, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getDatabase } from 'firebase-admin/database';
+import { getStorage } from 'firebase-admin/storage';
+import { getFirestore } from 'firebase-admin/firestore';
 import dotenv from 'dotenv';
-import { getAuth } from "firebase-admin/auth";
-import { getDatabase } from "firebase-admin/database";
-import { getStorage } from "firebase-admin/storage";
-import { getFirestore } from "firebase-admin/firestore";
 
-// Cargar variables locales si existen
 dotenv.config();
 
-let credentialParams;
+let serviceAccount;
 
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  // CI/CD: JSON completo como string
-  const parsed = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  credentialParams = {
-    projectId: parsed.project_id,
-    privateKey: parsed.private_key?.replace(/\\n/g, '\n'),
-    clientEmail: parsed.client_email,
-  };
+  // ✅ Modo GitHub Actions: usar JSON completo
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  try {
+    const parsed = JSON.parse(raw);
+    serviceAccount = {
+      projectId: parsed.project_id,
+      privateKey: parsed.private_key.replace(/\\n/g, '\n'),
+      clientEmail: parsed.client_email,
+    };
+  } catch (err) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT no es un JSON válido');
+  }
 } else {
-  // Local: variables individuales
-  credentialParams = {
+  // ✅ Modo local: usar variables individuales
+  serviceAccount = {
     projectId: process.env.FB_PROJECT_ID,
     privateKey: process.env.FB_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     clientEmail: process.env.FB_CLIENT_EMAIL,
@@ -29,8 +33,8 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
 
 const app = initializeApp(
   {
-    credential: cert(credentialParams),
-    databaseURL: `https://${credentialParams.projectId}-default-rtdb.firebaseio.com`,
+    credential: cert(serviceAccount),
+    databaseURL: `https://${serviceAccount.projectId}-default-rtdb.firebaseio.com`,
   },
   "principal"
 );
