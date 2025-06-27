@@ -22,4 +22,4 @@ function App() {
 }
 
 export default App;
-<h1>¡Hola desde Firebe Depoy!</h1>
+<h1>¡Hola desde Fiddrebe Depoy!</h1>
