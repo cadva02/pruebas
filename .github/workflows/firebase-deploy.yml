@@ -36,7 +36,11 @@ jobs:
 
       - name: Set up Service Account credentials
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud.json
-
+        
+      - name: Check Firebase Auth
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcloud.json
+        run: firebase projects:list --project gaid-agent
       - name: Deploy to Firebase
         env:
           GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcloud.json
