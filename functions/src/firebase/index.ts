@@ -1,4 +1,3 @@
-// import * as admin from "firebase-admin";
 import { initializeApp, cert } from 'firebase-admin/app';
 import dotenv from 'dotenv';
 import { getAuth } from "firebase-admin/auth";
@@ -6,26 +5,27 @@ import { getDatabase } from "firebase-admin/database";
 import { getStorage } from "firebase-admin/storage";
 import { getFirestore } from "firebase-admin/firestore";
 
-// Load environment variables
+// Cargar variables de entorno
 dotenv.config();
 
-export const accountParams = {
-    type: process.env.FB_TYPE,
-    projectId: process.env.FB_PROJECT_ID,
-    privateKeyId: process.env.FB_PRIVATE_KEY_ID,
-    privateKey: process.env.FB_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Handle escaped newlines
-    clientEmail: process.env.FB_CLIENT_EMAIL,
-    clientId: process.env.FB_CLIENT_ID,
-    authUri: process.env.FB_AUTH_URI,
-    tokenUri: process.env.FB_TOKEN_URI,
-    authProviderX509CertUrl: process.env.FB_AUTH_PROVIDER_X509_CERT_URL,
-    clientC509CertUrl: process.env.FB_CLIENT_X509_CERT_URL,
-};
+// Leer el JSON completo de la Service Account desde una sola variable
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
 
 const app = initializeApp(
     {
-        credential: cert(accountParams),
-        databaseURL: `https://${accountParams.projectId}-default-rtdb.firebaseio.com`,
+        credential: cert({
+            type: serviceAccount.type,
+            projectId: serviceAccount.project_id,
+            privateKeyId: serviceAccount.private_key_id,
+            privateKey: serviceAccount.private_key?.replace(/\\n/g, '\n'),
+            clientEmail: serviceAccount.client_email,
+            clientId: serviceAccount.client_id,
+            authUri: serviceAccount.auth_uri,
+            tokenUri: serviceAccount.token_uri,
+            authProviderX509CertUrl: serviceAccount.auth_provider_x509_cert_url,
+            clientC509CertUrl: serviceAccount.client_x509_cert_url,
+        }),
+        databaseURL: `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`,
     },
     "principal"
 );
