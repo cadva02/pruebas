@@ -5,27 +5,36 @@ import { getDatabase } from "firebase-admin/database";
 import { getStorage } from "firebase-admin/storage";
 import { getFirestore } from "firebase-admin/firestore";
 
-// Cargar variables de entorno
+// Cargar variables locales si existen
 dotenv.config();
 
-// Leer y parsear la variable secreta como objeto JSON
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+let credentialParams;
 
-// Inicializar Firebase Admin
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  // CI/CD: JSON completo como string
+  const parsed = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  credentialParams = {
+    projectId: parsed.project_id,
+    privateKey: parsed.private_key?.replace(/\\n/g, '\n'),
+    clientEmail: parsed.client_email,
+  };
+} else {
+  // Local: variables individuales
+  credentialParams = {
+    projectId: process.env.FB_PROJECT_ID,
+    privateKey: process.env.FB_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    clientEmail: process.env.FB_CLIENT_EMAIL,
+  };
+}
+
 const app = initializeApp(
   {
-    credential: cert({
-      projectId: serviceAccount.project_id,
-      privateKey: serviceAccount.private_key?.replace(/\\n/g, '\n'),
-      clientEmail: serviceAccount.client_email,
-      clientId: serviceAccount.client_id,
-    }),
-    databaseURL: `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`,
+    credential: cert(credentialParams),
+    databaseURL: `https://${credentialParams.projectId}-default-rtdb.firebaseio.com`,
   },
   "principal"
 );
 
-// Exportar servicios
 export const auth = getAuth(app);
 export const db = getDatabase(app);
 export const storage = getStorage(app);
