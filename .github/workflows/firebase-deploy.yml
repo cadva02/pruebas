@@ -52,11 +52,19 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
+      - name: Crear credenciales para Google Cloud
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" | sed 's/\\n/\
+          /g' > "${HOME}/gcloud-key.json"
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-
+          credentials_json: '${{ env.GCLOUD_KEY }}'
+        env:
+          GCLOUD_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
